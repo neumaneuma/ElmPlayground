@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Regex
-
+import String
 
 
 -- MAIN
@@ -20,6 +20,7 @@ main =
 
 type alias Model =
   { name : String
+  , age : String
   , password : String
   , passwordAgain : String
   }
@@ -27,7 +28,7 @@ type alias Model =
 
 init : Model
 init =
-  Model "" "" ""
+  Model "" "" "" ""
 
 
 
@@ -36,6 +37,7 @@ init =
 
 type Msg
   = Name String
+  | Age String
   | Password String
   | PasswordAgain String
 
@@ -46,12 +48,14 @@ update msg model =
     Name name ->
       { model | name = name }
 
+    Age age ->
+      { model | age = age }
+
     Password password ->
       { model | password = password }
 
     PasswordAgain password ->
       { model | passwordAgain = password }
-
 
 
 -- VIEW
@@ -61,11 +65,12 @@ view : Model -> Html Msg
 view model =
   div []
     [ viewInput "text" "Name" model.name Name
+    , viewInput "text" "Age" model.age Age
     -- , viewInput "password" "Password" model.password Password
     , viewInput "text" "Password" model.password Password
     -- , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
     , viewInput "text" "Re-enter Password" model.passwordAgain PasswordAgain
-    , viewValidation model
+    , validateInput model
     ]
 
 
@@ -74,17 +79,22 @@ viewInput t p v toMsg =
   input [ type_ t, placeholder p, value v, onInput toMsg ] []
 
 
-viewValidation : Model -> Html msg
-viewValidation model =
-  checkPasswordEquality model.password model.passwordAgain
+validateInput : Model -> Html msg
+validateInput model =
+  validatePassword model
+  |> validateAgeIsInt
+  |> outputHtmlDiv
+
+validatePassword : Model -> FormValidation
+validatePassword model =
+  checkPasswordEquality model
     |> checkPasswordLength
     |> verifyPasswordContainsUppercaseCharacters
     |> verifyPasswordContainsLowercaseCharacters
     |> verifyPasswordContainsNumbers
-    |> outputHtmlDiv
     
 type FormValidation
-  = Success String
+  = Success Model
   | Failure String
 
 outputHtmlDiv: FormValidation -> Html msg
@@ -95,34 +105,42 @@ outputHtmlDiv validation =
     Success _ ->
       div [ style "color" "green" ] [ text "OK" ]
 
-checkPasswordEquality : String -> String -> FormValidation
-checkPasswordEquality password passwordAgain =
-  if password == passwordAgain then
-    Success password
-  else
-    Failure "Passwords do not match!"
+checkPasswordEquality : Model -> FormValidation
+checkPasswordEquality model =
+  let
+    password = model.password
+    passwordAgain = model.passwordAgain
+  in
+    if password == passwordAgain then
+      Success model
+    else
+      Failure "Passwords do not match!"
 
 checkPasswordLength : FormValidation -> FormValidation
 checkPasswordLength previousValidation =
   case previousValidation of
     Failure message -> Failure message
-    Success password ->
-      if String.length password < 8 then
-        Failure "Password must be at least 8 characters"
-      else
-        Success password
+    Success model ->
+      let
+          password = model.password
+      in
+        if String.length password < 8 then
+          Failure "Password must be at least 8 characters"
+        else
+          Success model
 
 verifyPasswordContainsRequiredCharacters : FormValidation -> String -> String -> FormValidation
 verifyPasswordContainsRequiredCharacters previousValidation pattern error =
   case previousValidation of
     Failure message -> Failure message
-    Success password ->
+    Success model ->
       let
+        password = model.password
         regex = Maybe.withDefault Regex.never <| Regex.fromString pattern
         contains = Regex.contains regex password
       in
         case contains of
-          True -> Success password
+          True -> Success model
           False -> Failure ("Password doesn't contain any " ++ error)
 
 verifyPasswordContainsUppercaseCharacters : FormValidation -> FormValidation
@@ -148,3 +166,21 @@ verifyPasswordContainsNumbers previousValidation =
     errorMessage = "numbers"
   in
     verifyPasswordContainsRequiredCharacters previousValidation pattern errorMessage
+
+
+validateAgeIsInt : FormValidation -> FormValidation
+validateAgeIsInt previousValidation =
+  case previousValidation of
+    Failure message -> Failure message
+    Success model ->
+      let
+        age = model.age
+        cast = String.toInt age
+      in
+        case cast of
+          Just value ->
+            if value < 1 then
+              Failure "Age must be greater than 0"
+            else
+              Success model
+          Nothing -> Failure "Age is not a valid number"
