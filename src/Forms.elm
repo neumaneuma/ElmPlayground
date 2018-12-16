@@ -1,10 +1,14 @@
 import Browser
 import Parser
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html exposing (Html)
 import Regex
 import String
+import Element exposing (..)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Events exposing (..)
+import Element.Font as Font
+import Element.Input as Input
 
 
 -- MAIN
@@ -63,27 +67,43 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ viewInput "text" "Name" model.name Name
-    , viewInput "text" "Age" model.age Age
-    -- , viewInput "password" "Password" model.password Password
-    , viewInput "text" "Password" model.password Password
-    -- , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
-    , viewInput "text" "Re-enter Password" model.passwordAgain PasswordAgain
-    , validateInput model
+  layout [] <|
+    column [height fill, width fill ]
+           [ passwordInput
+
+           ]
+
+passwordInput : Element msg
+passwordInput =
+  row
+    [ width fill
+    -- , paddingXY 20 5
+    -- , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+    -- , Border.color <| rgb255 200 200 200
     ]
+    [ Input. ]
+  -- div []
+  --   [ viewInput "text" "Name" model.name Name
+  --   , viewInput "text" "Age" model.age Age
+  --   -- , viewInput "password" "Password" model.password Password
+  --   , viewInput "text" "Password" model.password Password
+  --   -- , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
+  --   , viewInput "text" "Re-enter Password" model.passwordAgain PasswordAgain
+  --   , input [type_ "button", value "Submit"] []
+  --   , validateInput model
+  --   ]
 
 
-viewInput : String -> String -> String -> (String -> msg) -> Html msg
-viewInput t p v toMsg =
-  input [ type_ t, placeholder p, value v, onInput toMsg ] []
+-- viewInput : String -> String -> String -> (String -> msg) -> Html msg
+-- viewInput t p v toMsg =
+--   input [ type_ t, placeholder p, value v, onInput toMsg ] []
 
 
-validateInput : Model -> Html msg
-validateInput model =
-  validatePassword model
-  |> validateAgeIsInt
-  |> outputHtmlDiv
+-- validateInput : Model -> Html msg
+-- validateInput model =
+--   validatePassword model
+--   |> validateAgeIsInt
+--   |> outputHtmlDiv
 
 validatePassword : Model -> FormValidation
 validatePassword model =
@@ -97,13 +117,13 @@ type FormValidation
   = Success Model
   | Failure String
 
-outputHtmlDiv: FormValidation -> Html msg
-outputHtmlDiv validation =
-  case validation of
-    Failure message ->
-      div [ style "color" "red" ] [ text message ]
-    Success _ ->
-      div [ style "color" "green" ] [ text "OK" ]
+-- outputHtmlDiv: FormValidation -> Html msg
+-- outputHtmlDiv validation =
+--   case validation of
+--     Failure message ->
+--       div [ style "color" "red" ] [ text message ]
+--     Success _ ->
+--       div [ style "color" "green" ] [ text "OK" ]
 
 checkPasswordEquality : Model -> FormValidation
 checkPasswordEquality model =
