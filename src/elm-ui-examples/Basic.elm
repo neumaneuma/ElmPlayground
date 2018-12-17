@@ -7,8 +7,9 @@ import Element.Background as Background
 import Element.Font as Font
 import Element.Input
 import Element.Lazy
+import Html exposing (..)
 
-
+main : Html msg
 main =
     Element.layout
         [ Background.color (rgba 0 0 0 1)
@@ -26,4 +27,4 @@ main =
     <|
         el
             [ centerX, centerY ]
-            (text "Hello stylish friend!")
+            (Element.text "Hello stylish friend!")
