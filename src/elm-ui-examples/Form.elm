@@ -81,13 +81,18 @@ view model =
         [ Font.size 20
         ]
     <|
-        Element.column [ width (px 800), height shrink, centerY, centerX, spacing 36, padding 10, explain Debug.todo ]
+        Element.column [ width (px 800), height shrink, centerY, centerX, spacing 36, padding 10
+        --]
+        , explain Debug.todo ]
             [ el
                 [ Region.heading 1
+                -- , alignLeft
+                , centerX
                 , alignLeft
+                -- , centerY
                 , Font.size 36
                 ]
-                (text "Welcome to the Stylish Elephants Lunch Emporium")
+                (text "Welcome!")
             , Input.radio
                 [ spacing 12
                 , Background.color grey
@@ -155,12 +160,13 @@ view model =
                         ]
                         Element.none
                     )
+                , Background.color <| rgb 1 0 0
                 ]
                 { onChange = \new -> Update { model | spiciness = new }
                 , label = Input.labelAbove [] (text ("Spiciness: " ++ String.fromFloat model.spiciness))
                 , min = 0
                 , max = 3.2
-                , step = Nothing
+                , step = Just 1
                 , value = model.spiciness
                 , thumb =
                     Input.defaultThumb
