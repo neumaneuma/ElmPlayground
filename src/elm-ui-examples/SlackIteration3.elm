@@ -45,17 +45,18 @@ chatPanel activeChannel =
         messagePanel = column [] []
         footer = createFooter
     in
-        column [ height fill, width <| fillPortion 5, explain Debug.todo ]
-            [ header
-            , messagePanel
-            , footer
+        column
+            [ height fill
+            , width <| fillPortion 5
+            -- , explain Debug.todo
             ]
+            <| [ header, messagePanel, footer ]
 
 createHeader : String -> Element msg
 createHeader activeChannel =
     row
         [ width fill
-        -- , height fill -- if this was uncommented, then header would take up all available blank space
+        -- , height fill -- if this was uncommented, then header would take up all available vertical blank space
         , paddingXY 20 5
         , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
         , Border.color <| rgb255 200 200 200
@@ -79,13 +80,13 @@ createFooter =
         messageTextBoxContainer = createMessageTextBoxContainer
     in
         row
-            -- [ alignBottom TODO how does alignBottom affect everything?
-            -- , padding 20
-            [ padding 20
-            -- , width fill
+            [ alignBottom -- TODO how does alignBottom affect everything?
+            , padding 20
+            , width fill
+            , height fill
             -- , explain Debug.todo
             ]
-            <| [ createMessageTextBoxContainer ]
+            <| [ messageTextBoxContainer ]
 
 createMessageTextBoxContainer : Element msg
 createMessageTextBoxContainer =
@@ -95,7 +96,16 @@ createMessageTextBoxContainer =
     in
         row
             [ spacingXY 2 0
-            -- , width fill
+            , width fill
+            , height fill
+            
+            -- , centerX
+            -- , centerY
+            -- , alignRight
+            , alignLeft
+            -- , alignTop
+            , alignBottom
+
             , Border.width 2
             , Border.rounded 4
             , Border.color <| rgb255 200 200 200
@@ -106,27 +116,28 @@ createMessageTextBoxContainer =
 createPlusSignButton : Element msg
 createPlusSignButton =
     row
-        -- [ padding 15
-        -- , spacingXY 15 0
-        [ spacingXY 15 0
+        [ padding 15
         , Border.widthEach { right = 2, left = 0, top = 0, bottom = 0 }
         , Border.color <| rgb255 200 200 200
         , mouseOver [ Background.color <| rgb255 86 182 239 ]
+
         -- , centerX
         -- , centerY
         , alignLeft
-        , alignRight
-        -- , alignTop
+        -- , alignRight
+        , alignTop
         -- , alignBottom
+
         -- , explain Debug.todo
         ]
-        [ text "+", text "-", text "*", text "/" ]
+        [ text "+" ]
 
 createMessageTextbox : Element msg
 createMessageTextbox =
     row
-        [ mouseOver [ Background.color <| rgb255 100 282 44 ] ]
-        [ text "mod" ]
+        [ mouseOver [ Background.color <| rgb255 100 282 44 ]
+        ]
+        []
 
 main : Html msg
 main =
