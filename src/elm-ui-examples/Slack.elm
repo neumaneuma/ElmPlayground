@@ -53,7 +53,7 @@ channelPanel channels activeChannel =
         [ height fill
         , width <| fillPortion 1
         , paddingXY 0 10
-        , Background.color <| rgb255 92 99 118
+        , Background.color <| rgb255 47 61 78
         , Font.color <| rgb255 255 255 255
         ]
     <|
@@ -155,7 +155,7 @@ createMessageTextBoxContainer =
             , alignLeft
             , alignBottom
             , Border.width 2
-            , Border.rounded 4
+            , Border.rounded 8
             , Border.color <| rgb255 200 200 200
             -- , explain Debug.todo
             ]
@@ -167,7 +167,7 @@ createPlusSignButton =
         [ padding 15
         , Border.widthEach { right = 2, left = 0, top = 0, bottom = 0 }
         , Border.color <| rgb255 200 200 200
-        , mouseOver [ Background.color <| rgb255 86 182 139 ]
+        , mouseOver [ Background.color <| rgb255 52 188 141, Font.color <| rgb255 255 255 255 ]
         , alignLeft
         ]
         [ text "+" ]
