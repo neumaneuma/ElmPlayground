@@ -110,8 +110,11 @@ chatPanel channel messages =
                 ]
 
         messagePanel =
-            column [ padding 10, spacingXY 0 20, scrollbarY ] <|
-                List.map messageEntry messages
+            column
+                [ padding 10
+                , spacingXY 0 20
+                , scrollbarY
+                ] <| List.map messageEntry messages
 
         footer =
             el [ alignBottom, padding 20, width fill ] <|
@@ -142,6 +145,7 @@ chatPanel channel messages =
 
 main : Html msg
 main =
+    -- layout [ ] <|
     layout [ height fill ] <|
         row [ height fill, width fill ]
             [ channelPanel sampleChannels sampleActiveChannel
