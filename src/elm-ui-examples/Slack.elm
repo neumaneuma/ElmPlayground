@@ -61,22 +61,23 @@ channelPanel channels activeChannel =
 
 createChannelRow : String -> String -> Element msg
 createChannelRow activeChannel channel =
-    row (createChannelAttributes activeChannel channel) 
-        [ text ("# " ++ channel) ]
-
-createChannelAttributes : String -> String -> List (Attribute msg)
-createChannelAttributes activeChannel channel =
     let
         activeChannelAttrs =
-            [ Background.color <| rgb255 117 179 201, Font.bold ]
+            [ Background.color <| rgb255 97 150 201 ]
 
         channelAttrs =
             [ paddingXY 15 5, width fill ]
     in
         if channel == activeChannel then
-            activeChannelAttrs ++ channelAttrs
+            row ( activeChannelAttrs ++ channelAttrs )
+                [ el [ Font.color <| rgb255 198 218 236 ] <| text "# "
+                , el [ Font.bold ] <| text channel
+                ]
         else
-            channelAttrs
+            row channelAttrs
+                [ el [ Font.color <| rgb255 140 148 157 ] <| text "# "
+                , el [ Font.bold ] <| text channel
+                ]
 
 chatPanel : String -> List Message -> Element msg
 chatPanel activeChannel messages =
