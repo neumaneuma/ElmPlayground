@@ -80,10 +80,10 @@ createFooter =
         messageTextBoxContainer = createMessageTextBoxContainer
     in
         row
-            [ alignBottom -- TODO how does alignBottom affect everything?
+            [ alignBottom
             , padding 20
             , width fill
-            , height fill
+            -- , height fill
             -- , explain Debug.todo
             ]
             <| [ messageTextBoxContainer ]
@@ -97,7 +97,7 @@ createMessageTextBoxContainer =
         row
             [ spacingXY 2 0
             , width fill
-            , height fill
+            -- , height fill
             
             -- , centerX
             -- , centerY
@@ -125,7 +125,7 @@ createPlusSignButton =
         -- , centerY
         , alignLeft
         -- , alignRight
-        , alignTop
+        -- , alignTop
         -- , alignBottom
 
         -- , explain Debug.todo
