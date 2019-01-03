@@ -49,98 +49,135 @@ sampleMessages =
 
 channelPanel : List String -> String -> Element msg
 channelPanel channels activeChannel =
+    column
+        [ height fill
+        , width <| fillPortion 1
+        , paddingXY 0 10
+        , Background.color <| rgb255 92 99 118
+        , Font.color <| rgb255 255 255 255
+        ]
+    <|
+        List.map (createChannelRow activeChannel) channels
+
+createChannelRow : String -> String -> Element msg
+createChannelRow activeChannel channel =
+    row (createChannelAttributes activeChannel channel) 
+        [ text ("# " ++ channel) ]
+
+createChannelAttributes : String -> String -> List (Attribute msg)
+createChannelAttributes activeChannel channel =
     let
         activeChannelAttrs =
             [ Background.color <| rgb255 117 179 201, Font.bold ]
 
         channelAttrs =
             [ paddingXY 15 5, width fill ]
-
-        channelEl channel =
-            el
-                (if channel == activeChannel then
-                    activeChannelAttrs ++ channelAttrs
-
-                 else
-                    channelAttrs
-                )
-            <|
-                text ("# " ++ channel)
     in
-    column
-        [ height fill
-        , width <| fillPortion 1
-        , paddingXY 0 10
-        , scrollbars
-        , Background.color <| rgb255 92 99 118
-        , Font.color <| rgb255 255 255 255
-        ]
-    <|
-        List.map channelEl channels
-
+        if channel == activeChannel then
+            activeChannelAttrs ++ channelAttrs
+        else
+            channelAttrs
 
 chatPanel : String -> List Message -> Element msg
-chatPanel channel messages =
+chatPanel activeChannel messages =
     let
-        header =
-            row
-                [ width fill
-                , paddingXY 20 5
-                , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-                , Border.color <| rgb255 200 200 200
-                ]
-                [ el [] <| text ("#" ++ channel)
-                , Input.button
-                    [ padding 5
-                    , alignRight
-                    , Border.width 1
-                    , Border.rounded 3
-                    , Border.color <| rgb255 200 200 200
-                    ]
-                    { onPress = Nothing
-                    , label = text "Search"
-                    }
-                ]
-
-        messageEntry message =
-            column [ width fill, spacingXY 0 5 ]
-                [ row [ spacingXY 10 0 ]
-                    [ el [ Font.bold ] <| text message.author, text message.time ]
-                , paragraph [] [ text message.text ]
-                ]
-
-        messagePanel =
-            column
-                [ padding 10
-                , spacingXY 0 20
-                , scrollbarY
-                ] <| List.map messageEntry messages
-
-        footer =
-            el [ alignBottom, padding 20, width fill ] <|
-                row
-                    [ spacingXY 2 0
-                    , width fill
-                    , Border.width 2
-                    , Border.rounded 4
-                    , Border.color <| rgb255 200 200 200
-                    ]
-                    [ el
-                        [ padding 5
-                        , Border.widthEach { right = 2, left = 0, top = 0, bottom = 0 }
-                        , Border.color <| rgb255 200 200 200
-                        , mouseOver [ Background.color <| rgb255 86 182 139 ]
-                        ]
-                      <|
-                        text "+"
-                    , el [ Background.color <| rgb255 255 255 255 ] none
-                    ]
+        header = createHeader activeChannel
+        messagePanel = createMessagePanel messages
+        footer = createFooter
     in
-    column [ height fill, width <| fillPortion 5 ]
-        [ header
-        , messagePanel
-        , footer
+        column
+            [ height fill
+            , width <| fillPortion 5
+            -- , explain Debug.todo
+            ]
+            <| [ header, messagePanel, footer ]
+
+createHeader : String -> Element msg
+createHeader activeChannel =
+    row
+        [ width fill
+        , paddingXY 20 5
+        , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+        , Border.color <| rgb255 200 200 200
         ]
+        [ row [] [text <| "#" ++ activeChannel]
+        , Input.button
+            [ padding 5
+            , alignRight
+            , Border.width 1
+            , Border.rounded 3
+            , Border.color <| rgb255 200 200 200
+            ]
+            { onPress = Nothing
+            , label = text "Search"
+            }
+        ]
+
+createMessagePanel : List Message -> Element msg
+createMessagePanel messages =
+    column
+        [ padding 10
+        , spacingXY 0 20
+        , scrollbarY
+        ] <| List.map messageEntry messages
+
+
+messageEntry : Message -> Element msg
+messageEntry message =
+    column [ width fill, spacingXY 0 5 ]
+        [ row [ spacingXY 10 0 ]
+            [ el [ Font.bold ] <| text message.author, text message.time ]
+        , paragraph [] [ text message.text ]
+        ]
+
+createFooter : Element msg
+createFooter =
+    let
+        messageTextBoxContainer = createMessageTextBoxContainer
+    in
+        row
+            [ alignBottom
+            , padding 20
+            , width fill
+            -- , explain Debug.todo
+            ]
+            <| [ messageTextBoxContainer ]
+
+createMessageTextBoxContainer : Element msg
+createMessageTextBoxContainer =
+    let
+        plusSignButton = createPlusSignButton
+        messageTextBox = createMessageTextbox
+    in
+        row
+            [ spacingXY 2 0
+            , width fill
+            , alignLeft
+            , alignBottom
+            , Border.width 2
+            , Border.rounded 4
+            , Border.color <| rgb255 200 200 200
+            -- , explain Debug.todo
+            ]
+            <| [ plusSignButton, messageTextBox ]
+
+createPlusSignButton : Element msg
+createPlusSignButton =
+    row
+        [ padding 15
+        , Border.widthEach { right = 2, left = 0, top = 0, bottom = 0 }
+        , Border.color <| rgb255 200 200 200
+        , mouseOver [ Background.color <| rgb255 86 182 139 ]
+        , alignLeft
+        ]
+        [ text "+" ]
+
+createMessageTextbox : Element msg
+createMessageTextbox =
+    row
+        [ mouseOver [ Background.color <| rgb255 100 282 44 ]
+        ]
+        []
 
 
 main : Html msg
