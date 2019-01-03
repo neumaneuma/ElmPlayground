@@ -47,8 +47,8 @@ sampleMessages =
     ]
 
 
-channelPanel : List String -> String -> Element msg
-channelPanel channels activeChannel =
+createChannelPanel : List String -> String -> Element msg
+createChannelPanel channels activeChannel =
     column
         [ height fill
         , width <| fillPortion 1
@@ -79,8 +79,8 @@ createChannelRow activeChannel channel =
                 , el [ Font.bold ] <| text channel
                 ]
 
-chatPanel : String -> List Message -> Element msg
-chatPanel activeChannel messages =
+createChatPanel : String -> List Message -> Element msg
+createChatPanel activeChannel messages =
     let
         header = createHeader activeChannel
         messagePanel = createMessagePanel messages
@@ -183,9 +183,14 @@ createMessageTextbox =
 
 main : Html msg
 main =
-    -- layout [ ] <|
-    layout [ height fill ] <|
-        row [ height fill, width fill ]
-            [ channelPanel sampleChannels sampleActiveChannel
-            , chatPanel sampleActiveChannel sampleMessages
-            ]
+    let
+        channelPanel = createChannelPanel sampleChannels sampleActiveChannel
+        chatPanel = createChatPanel sampleActiveChannel sampleMessages
+    in
+        -- layout [ ] <|
+        layout [ height fill ] <|
+            row [ height fill, width fill ]
+                [ channelPanel
+                , chatPanel
+                ]
+
